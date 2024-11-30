@@ -1,8 +1,37 @@
 {% extends 'base.html' %}
-
+{% load filters %}
 {% block content %}
 <h1>{{ advertisement.title }}</h1>
 <p>{{ advertisement.content }}</p>
+
+<h3>Photos</h3>
+<div>
+    {% if advertisement.photo1 %}
+        <div>
+            <p>Photo 1:</p>
+            <img src="data:image/jpeg;base64,{{ advertisement.photo1|b64encode }}" alt="Photo 1" style="max-width: 300px;">
+        </div>
+    {% endif %}
+    {% if advertisement.photo2 %}
+        <div>
+            <p>Photo 2:</p>
+            <img src="data:image/jpeg;base64,{{ advertisement.photo2|b64encode }}" alt="Photo 2" style="max-width: 300px;">
+        </div>
+    {% endif %}
+    {% if advertisement.photo3 %}
+        <div>
+            <p>Photo 3:</p>
+            <img src="data:image/jpeg;base64,{{ advertisement.photo3|b64encode }}" alt="Photo 3" style="max-width: 300px;">
+        </div>
+    {% endif %}
+    {% if advertisement.photo4 %}
+        <div>
+            <p>Photo 4:</p>
+            <img src="data:image/jpeg;base64,{{ advertisement.photo4|b64encode }}" alt="Photo 4" style="max-width: 300px;">
+        </div>
+    {% endif %}
+</div>
+
 {% if user.is_authenticated %}
     <button onclick="location.href='{% url 'board:edit_advertisement' pk=advertisement.pk %}'">Edit</button>
     <form method="post" action="{% url 'board:delete_advertisement' pk=advertisement.pk %}" style="display:inline;">

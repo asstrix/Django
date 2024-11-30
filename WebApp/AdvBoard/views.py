@@ -42,10 +42,20 @@ def advertisement_detail(request, pk):
 @login_required
 def add_advertisement(request):
     if request.method == "POST":
-        form = AdvertisementForm(request.POST)
+        form = AdvertisementForm(request.POST, request.FILES)
         if form.is_valid():
             advertisement = form.save(commit=False)
             advertisement.author = request.user
+            for i in range(1, 5):
+                photo = request.FILES.get(f'photo{i}')
+                if photo:
+                    if not photo.content_type.startswith('image/'):
+                        form.add_error(None, f"Photo {i} must be an image file.")
+                        return render(request, 'board/add_advertisement.html', {'form': form})
+                    if photo.size > 5 * 1024 * 1024:  # 5 MB
+                        form.add_error(None, f"Photo {i} exceeds 5MB size limit.")
+                        return render(request, 'board/add_advertisement.html', {'form': form})
+                    setattr(advertisement, f'photo{i}', photo.read())
             advertisement.save()
             return redirect('board:advertisement_list')
     else:
@@ -54,11 +64,21 @@ def add_advertisement(request):
 
 
 def edit_advertisement(request, pk):
-    advertisement = Advertisement.objects.get(pk=pk)
+    advertisement = get_object_or_404(Advertisement, pk=pk)
     if request.method == 'POST':
-        form = AdvertisementForm(request.POST, instance=advertisement)
+        form = AdvertisementForm(request.POST, request.FILES, instance=advertisement)
         if form.is_valid():
-            form.save()
+            for i in range(1, 5):
+                photo = request.FILES.get(f'photo{i}')
+                if photo:
+                    if not photo.content_type.startswith('image/'):
+                        form.add_error(None, f"Photo {i} must be an image file.")
+                        return render(request, 'board/edit_adv.html', {'form': form, 'advertisement': advertisement})
+                    if photo.size > 5 * 1024 * 1024:  # 5 MB
+                        form.add_error(None, f"Photo {i} exceeds 5MB size limit.")
+                        return render(request, 'board/edit_adv.html', {'form': form, 'advertisement': advertisement})
+                    setattr(advertisement, f'photo{i}', photo.read())
+            advertisement.save()
             return redirect('AdvBoard:advertisement_detail', pk=pk)
     else:
         form = AdvertisementForm(instance=advertisement)
