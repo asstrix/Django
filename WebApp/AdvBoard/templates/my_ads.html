@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% block title %}My Ads{% endblock %}
+{% block content %}
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <div style="display: flex; border-bottom: 1px solid #ddd; margin-bottom: 20px;">
+        <a href="{% url 'AdvBoard:my_ads' %}"
+           style="padding: 10px 20px; font-size: 16px; color: {% if active_tab == 'my_ads' %}#005a00{% else %}#555{% endif %};
+                  font-weight: {% if active_tab == 'my_ads' %}bold{% else %}normal{% endif %};
+                  text-decoration: none;
+                  border-bottom: {% if active_tab == 'my_ads' %}3px solid #005a00{% else %}none{% endif %};">
+            My ads
+        </a>
+    </div>
+
+    <div style="display: flex; align-items: center; border-bottom: 1px solid #ddd; margin-bottom: 20px; padding: 0 20px;">
+        <a href="{% url 'AdvBoard:my_ads' %}?filter=active"
+           style="padding: 5px 15px; font-size: 14px; color: {% if sub_tab == 'active' %}#005a00{% else %}#555{% endif %};
+                  text-decoration: none; border-right: 1px solid #ddd;">
+            Active ({{ active_count }})
+        </a>
+        <a href="{% url 'AdvBoard:my_ads' %}?filter=completed"
+           style="padding: 5px 15px; font-size: 14px; color: {% if sub_tab == 'completed' %}#005a00{% else %}#555{% endif %};
+                  text-decoration: none; border-right: 1px solid #ddd;">
+            Completed ({{ completed_count }})
+        </a>
+        <a href="{% url 'AdvBoard:my_ads' %}?filter=deleted"
+           style="padding: 5px 15px; font-size: 14px; color: {% if sub_tab == 'deleted' %}#005a00{% else %}#555{% endif %};
+                  text-decoration: none; border-right: 1px solid #ddd;">
+            Deleted ({{ deleted_count }})
+        </a>
+        <a href="{% url 'AdvBoard:add_adv' %}"
+           style="padding: 5px 10px; font-size: 18px; color: #005a00; text-decoration: none; margin-left: 10px; font-weight: bold;">
+            Add
+        </a>
+    </div>
+
+    <div>
+        {% if ads %}
+            <ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 20px;">
+                {% for ad in ads %}
+                    <li style="width: 250px; border: 1px solid #ccc; border-radius: 8px; background-color: #fff;
+                               box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative; z-index: 1;">
+                        <a href="{% url 'AdvBoard:adv_detail' pk=ad.pk %}"
+                           style="text-decoration: none; color: inherit; display: block;">
+                            {% if ad.photo1 %}
+                                <div class="photo-container" style="position: relative; z-index: 1;">
+                                    <div style="width: 100%; height: 150px; overflow: hidden;">
+                                        <img src="data:image/jpeg;base64,{{ ad.photo1|b64encode }}"
+                                             alt="{{ ad.title }}"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div style="padding: 15px;">
+                                <div style="font-size: 14px; color: #555;">{{ ad.title }}</div>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="text-align: center; color: #777;">No ads available</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

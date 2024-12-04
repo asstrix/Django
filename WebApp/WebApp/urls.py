@@ -20,7 +20,7 @@ from AdvBoard import views as board_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('board/', include('AdvBoard.urls', namespace='board')),
+    path('board/', include('AdvBoard.urls', namespace='AdvBoard')),
     path('accounts/logout/', board_views.logout_view, name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', board_views.home, name='home'),
