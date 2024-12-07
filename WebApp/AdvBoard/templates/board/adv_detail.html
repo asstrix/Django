@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% load filters %}
 {% block content %}
+
+<h1>{{ adv.title }}</h1>
+<p>{{ adv.content }}</p>
+<p>Images</p>
+<div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        {% for photo in photos %}
+            {% if photo %}
+                <img src="data:image/jpeg;base64,{{ photo|b64encode }}"
+                     alt="Photo {{ forloop.counter }}"
+                     style="max-width: 300px; height: auto; object-fit: cover;">
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
 {% if user == adv.author %}
     <a href="{% url 'AdvBoard:edit_adv' pk=adv.pk %}"
        style="margin-top: 10px; padding: 5px 10px; font-size: 14px; color: #005a00; text-decoration: none;
@@ -23,7 +38,7 @@
 
     {% if not adv.completed %}
         <a href="#"
-           style=" margin-top: 10px; padding: 5px 10px; font-size: 14px; color: #337ab7; text-decoration: none;
+           style="margin-top: 10px; padding: 5px 10px; font-size: 14px; color: #337ab7; text-decoration: none;
                   border: 1px solid #337ab7; border-radius: 5px; display: inline-block; font-weight: bold; margin-left: 10px;"
            onclick="if(confirm('Mark this advertisement as completed?')) {
                document.getElementById('complete-form-{{ adv.pk }}').submit();
@@ -33,21 +48,7 @@
         <form id="complete-form-{{ adv.pk }}" method="post" action="{% url 'AdvBoard:complete_adv' pk=adv.pk %}" style="display: none;">
             {% csrf_token %}
         </form>
+    {% endif %}
 {% endif %}
-<h1>{{ adv.title }}</h1>
-<p>{{ adv.content }}</p>
-<p>Images</p>
-<div>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    {% for photo in photos %}
-        {% if photo %}
-            <img src="data:image/jpeg;base64,{{ photo|b64encode }}"
-                 alt="Photo {{ forloop.counter }}"
-                 style="max-width: 300px; height: auto; object-fit: cover;">
-        {% endif %}
-    {% endfor %}
-</div>
-</div>
 
-{% endif %}
 {% endblock %}

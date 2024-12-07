@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from .forms import SignUpForm
 from django.contrib.auth import login, authenticate
 from django.utils.timezone import now
+from django.http import JsonResponse
 
 
 def logout_view(request):
@@ -31,7 +32,10 @@ def home(request):
 
 
 def advertisement_list(request):
-    adv = Advertisement.objects.all()
+    adv = Advertisement.objects.filter(completed=False, deleted=False)
+    for ad in adv:
+        ad.like_count = ad.likes.count()
+        ad.dislike_count = ad.dislikes.count()
     return render(request, 'board/adv_list.html', {'adv': adv})
 
 
@@ -87,13 +91,6 @@ def edit_advertisement(request, pk):
     return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
 
 
-# def delete_advertisement(request, pk):
-#     if request.method == "POST":
-#         adv = get_object_or_404(Advertisement, pk=pk)
-#         adv.delete()
-#         return redirect('AdvBoard:adv_list')
-#     return redirect('AdvBoard:adv_detail', pk=pk)
-
 @login_required
 def delete_advertisement(request, pk):
     adv = get_object_or_404(Advertisement, pk=pk)
@@ -139,4 +136,28 @@ def my_advertisements(request):
         'active_count': active_ads.count(),
         'completed_count': completed_ads.count(),
         'deleted_count': deleted_ads.count(),
+    })
+
+
+def vote(request, pk, action):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'You must be logged in to like or dislike'}, status=403)
+    ad = get_object_or_404(Advertisement, pk=pk)
+    if action == 'like':
+        if request.user in ad.dislikes.all():
+            ad.dislikes.remove(request.user)
+        if request.user in ad.likes.all():
+            ad.likes.remove(request.user)
+        else:
+            ad.likes.add(request.user)
+    elif action == 'dislike':
+        if request.user in ad.likes.all():
+            ad.likes.remove(request.user)
+        if request.user in ad.dislikes.all():
+            ad.dislikes.remove(request.user)
+        else:
+            ad.dislikes.add(request.user)
+    return JsonResponse({
+        'likes': ad.likes.count(),
+        'dislikes': ad.dislikes.count()
     })

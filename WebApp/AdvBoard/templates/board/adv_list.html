@@ -7,7 +7,6 @@
     <li style="width: 250px; border: 1px solid #ccc; border-radius: 8px; background-color:
                 #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative; z-index: 1;">
       <a href="{% url 'AdvBoard:adv_detail' pk=ad.pk %}" style="text-decoration: none; color: inherit; display: block;">
-        <!-- Фото -->
         {% if ad.photo1 %}
           <div class="photo-container" style="position: relative; z-index: 1;">
             <div style="width: 100%; height: 150px; overflow: hidden;">
@@ -17,8 +16,6 @@
             </div>
           </div>
         {% endif %}
-
-        <!-- Информация -->
         <div style="padding: 15px;">
           <div style="margin-bottom: 5px; font-size: 14px; color: #555;">{{ ad.title }}</div>
           <div style="display: flex; align-items: center;">
@@ -28,6 +25,15 @@
             </span>
             <span style="font-size: 14px; color: #555;">
               {{ ad.author }}
+            <span style="margin-left: 50px; display: inline-flex; align-items: center; gap: 10px;">
+              <a href="#" onclick="vote({{ ad.pk }}, 'like'); return false;">
+                  <img src="{% static 'icons/thumbs-up.png' %}" alt="Thumbs Up" style="width: 20px; height: 20px; cursor: pointer;">
+              </a>
+              <span id="like-count-{{ ad.pk }}">{{ ad.like_count }}</span>
+              <a href="#" onclick="vote({{ ad.pk }}, 'dislike'); return false;">
+                  <img src="{% static 'icons/thumbs-down.png' %}" alt="Thumbs Down" style="width: 20px; height: 20px; cursor: pointer;">
+              </a>
+              <span id="dislike-count-{{ ad.pk }}">{{ ad.dislike_count }}</span>
             </span>
           </div>
         </div>
@@ -35,5 +41,27 @@
     </li>
   {% endfor %}
 </ul>
-
+<script>
+    function vote(adId, action) {
+        fetch(`/board/${adId}/${action}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                document.getElementById(`like-count-${adId}`).innerText = data.likes;
+                document.getElementById(`dislike-count-${adId}`).innerText = data.dislikes;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 {% endblock %}

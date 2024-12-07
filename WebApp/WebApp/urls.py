@@ -26,3 +26,4 @@ urlpatterns = [
     path('', board_views.home, name='home'),
     path('signup/', board_views.signup, name='signup'),
 ]
+

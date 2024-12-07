@@ -10,6 +10,8 @@ class Advertisement(models.Model):
     photo2 = models.BinaryField(blank=True, null=True)
     photo3 = models.BinaryField(blank=True, null=True)
     photo4 = models.BinaryField(blank=True, null=True)
+    likes = models.ManyToManyField(User, related_name="liked_ads", blank=True)
+    dislikes = models.ManyToManyField(User, related_name="disliked_ads",blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(blank=True, null=True)
