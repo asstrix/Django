@@ -92,12 +92,35 @@ def edit_advertisement(request, pk):
 
 
 @login_required
+def activate_advertisement(request, pk):
+    adv = get_object_or_404(Advertisement, pk=pk)
+    if request.method == "POST":
+        adv.completed = False
+        adv.deleted = False
+        adv.completed_at, adv.deleted_at = None, None
+        adv.save()
+        return redirect('AdvBoard:my_ads')
+    return redirect('AdvBoard:adv_detail', pk=pk)
+
+
+@login_required
 def delete_advertisement(request, pk):
     adv = get_object_or_404(Advertisement, pk=pk)
     if request.method == "POST":
+        adv.completed = False
+        adv.completed_at = None
         adv.deleted = True
         adv.deleted_at = now()
         adv.save()
+        return redirect('AdvBoard:my_ads')
+    return redirect('AdvBoard:adv_detail', pk=pk)
+
+
+@login_required
+def delete_completely(request, pk):
+    adv = get_object_or_404(Advertisement, pk=pk)
+    if request.method == "POST":
+        adv.delete()
         return redirect('AdvBoard:my_ads')
     return redirect('AdvBoard:adv_detail', pk=pk)
 

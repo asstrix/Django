@@ -45,3 +45,47 @@ li {
     position: relative;
     z-index: 1;
 }
+
+/* Меню */
+.menu-dropdown {
+    display: none; /* Скрыто по умолчанию */
+    position: absolute;
+    right: 0;
+    top: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.menu-dropdown a {
+    display: block;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    border-bottom: 1px solid #eee;
+}
+
+.menu-dropdown a:hover {
+    background-color: #f9f9f9;
+}
+
+/* Последний элемент меню */
+.menu-dropdown a:last-child {
+    border-bottom: none;
+}
+
+/* Кнопка меню */
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Показ меню при активной строке */
+.menu-container:hover .menu-dropdown {
+    display: block;
+}
