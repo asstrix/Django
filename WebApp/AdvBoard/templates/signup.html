@@ -1,11 +1,33 @@
 <!-- your_app/templates/signup.html -->
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-<h2>Sign up</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign up</button>
-</form>
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 20px;">
+            <label for="id_username" style="display: block; font-weight: bold; margin-bottom: 5px;">Username</label>
+            {% render_field form.username style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="id_email" style="display: block; font-weight: bold; margin-bottom: 5px;">Email</label>
+            {% render_field form.email style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="id_password1" style="display: block; font-weight: bold; margin-bottom: 5px;">Password</label>
+            {% render_field form.password1 style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="id_password2" style="display: block; font-weight: bold; margin-bottom: 5px;">Confirm Password</label>
+            {% render_field form.password2 style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+        </div>
+
+        <button type="submit" style="width: 100%; padding: 10px; background-color: #005a00; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Sign Up</button>
+    </form>
+</div>
 {% endblock %}

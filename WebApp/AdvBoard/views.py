@@ -67,32 +67,13 @@ def add_advertisement(request):
                         return render(request, 'board/add_adv.html', {'form': form})
                     setattr(adv, f'photo{i}', photo.read())
             adv.save()
+            request.user.advertisements_count += 1
+            request.user.save()
+
             return redirect('AdvBoard:my_ads')
     else:
         form = AdvertisementForm()
     return render(request, 'board/add_adv.html', {'form': form})
-
-
-# def edit_advertisement(request, pk):
-#     adv = get_object_or_404(Advertisement, pk=pk)
-#     if request.method == 'POST':
-#         form = AdvertisementForm(request.POST, request.FILES, instance=adv)
-#         if form.is_valid():
-#             for i in range(1, 5):
-#                 photo = request.FILES.get(f'photo{i}')
-#                 if photo:
-#                     if not photo.content_type.startswith('image/'):
-#                         form.add_error(None, f"Photo {i} must be an image file.")
-#                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
-#                     if photo.size > 5 * 1024 * 1024:  # 5 MB
-#                         form.add_error(None, f"Photo {i} exceeds 5MB size limit.")
-#                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
-#                     setattr(adv, f'photo{i}', photo.read())
-#             adv.save()
-#             return redirect('AdvBoard:adv_detail', pk=pk)
-#     else:
-#         form = AdvertisementForm(instance=adv)
-#     return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
 
 
 def edit_advertisement(request, pk):
@@ -100,37 +81,29 @@ def edit_advertisement(request, pk):
     if request.method == 'POST':
         form = AdvertisementForm(request.POST, request.FILES, instance=adv)
         if form.is_valid():
-            # Обработка новых фотографий и удаления
             for i in range(1, 5):
-                photo = request.FILES.get(f'photo{i}')
-
+                photo_field = f'photo{i}'
+                photo = request.FILES.get(photo_field)
                 if photo:
-                    # Проверить тип и размер фото
                     if not photo.content_type.startswith('image/'):
                         form.add_error(None, f"Photo {i} must be an image file.")
                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
                     if photo.size > 5 * 1024 * 1024:  # 5 MB
                         form.add_error(None, f"Photo {i} exceeds 5MB size limit.")
                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
-
-                    # Сохранить фото как FileField-compatible объект
-                    setattr(adv, f'photo{i}', photo.read())
+                    setattr(adv, photo_field, photo.read())
                 else:
-                    # Если поле пустое, удалить фото
-                    setattr(adv, f'photo{i}', None)
-
-            # Сохранить изменения в объявлении
+                    existing_photo = getattr(adv, photo_field)
+                    if request.POST.get(f'clear_{photo_field}'):
+                        setattr(adv, photo_field, None)
+                    elif not existing_photo:
+                        setattr(adv, photo_field, None)
             adv.save()
             return redirect('AdvBoard:adv_detail', pk=pk)
     else:
         form = AdvertisementForm(instance=adv)
-
-    # Собрать список фотографий для отображения в шаблоне
     photos = [adv.photo1, adv.photo2, adv.photo3, adv.photo4]
     return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv, 'photos': photos})
-
-
-
 
 
 @login_required

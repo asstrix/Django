@@ -1,12 +1,40 @@
-<!-- templates/registration/login.html -->
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-    <input type="hidden" name="next" value="{{ next }}">
-</form>
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div style="margin-bottom: 20px; color: red; font-weight: bold; text-align: center;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div style="margin-bottom: 20px;">
+            <label for="id_username" style="display: block; font-weight: bold; margin-bottom: 5px;">Username</label>
+            {% render_field form.username style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+            {% if form.username.errors %}
+                <div style="color: red; font-size: 14px; margin-top: 5px;">
+                    {{ form.username.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="id_password" style="display: block; font-weight: bold; margin-bottom: 5px;">Password</label>
+            {% render_field form.password style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+            {% if form.password.errors %}
+                <div style="color: red; font-size: 14px; margin-top: 5px;">
+                    {{ form.password.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <button type="submit" style="width: 100%; padding: 10px; background-color: #005a00; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Login</button>
+    </form>
+</div>
 {% endblock %}
