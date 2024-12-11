@@ -25,16 +25,17 @@
             </span>
             <span style="font-size: 14px; color: #555;">
               {{ ad.author }}
+            </span>
             <span style="margin-left: 50px; display: inline-flex; align-items: center; gap: 10px;">
               <a href="#" onclick="vote({{ ad.pk }}, 'like'); return false;">
                   <img src="{% static 'icons/thumbs-up.png' %}" alt="Thumbs Up" style="width: 20px; height: 20px; cursor: pointer;">
               </a>
-              <span id="like-count-{{ ad.pk }}">{{ ad.like_count }}</span>
-              <a href="#" onclick="vote({{ ad.pk }}, 'dislike'); return false;">
+            </span>
+              <span style="margin-left: 5px" id="like-count-{{ ad.pk }}">{{ ad.like_count }} </span>
+              <a style="margin-left: 10px" href="#" onclick="vote({{ ad.pk }}, 'dislike'); return false;">
                   <img src="{% static 'icons/thumbs-down.png' %}" alt="Thumbs Down" style="width: 20px; height: 20px; cursor: pointer;">
               </a>
-              <span id="dislike-count-{{ ad.pk }}">{{ ad.dislike_count }}</span>
-            </span>
+              <span style="margin-left: 5px" id="dislike-count-{{ ad.pk }}">{{ ad.dislike_count }}</span>
           </div>
         </div>
       </a>

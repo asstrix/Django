@@ -81,7 +81,7 @@
                                     Complete
                                 </a>
                                 <form id="complete-form-{{ ad.pk }}" method="post"
-                                      action="{% url 'AdvBoard:complete_advertisement' pk=ad.pk %}" style="display: none;">
+                                      action="{% url 'AdvBoard:complete_adv' pk=ad.pk %}" style="display: none;">
                                     {% csrf_token %}
                                 </form>
                                 <a href="#"

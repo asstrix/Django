@@ -1,11 +1,10 @@
-from django.shortcuts import render, redirect
 from AdvBoard.models import Advertisement
 from AdvBoard.forms import AdvertisementForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import SignUpForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.utils.timezone import now
 from django.http import JsonResponse
 
@@ -39,10 +38,15 @@ def advertisement_list(request):
     return render(request, 'board/adv_list.html', {'adv': adv})
 
 
+@login_required
 def advertisement_detail(request, pk):
     adv = get_object_or_404(Advertisement, pk=pk)
-    photos = [adv.photo1, adv.photo2, adv.photo3, adv.photo4]
-    return render(request, 'board/adv_detail.html', {'adv': adv, 'photos': photos})
+    if request.user == adv.author:
+        return redirect('AdvBoard:my_ads')
+    return render(request, 'board/adv_detail.html', {
+        'adv': adv,
+        'photos': [adv.photo1, adv.photo2, adv.photo3, adv.photo4],
+    })
 
 
 @login_required
@@ -69,26 +73,64 @@ def add_advertisement(request):
     return render(request, 'board/add_adv.html', {'form': form})
 
 
+# def edit_advertisement(request, pk):
+#     adv = get_object_or_404(Advertisement, pk=pk)
+#     if request.method == 'POST':
+#         form = AdvertisementForm(request.POST, request.FILES, instance=adv)
+#         if form.is_valid():
+#             for i in range(1, 5):
+#                 photo = request.FILES.get(f'photo{i}')
+#                 if photo:
+#                     if not photo.content_type.startswith('image/'):
+#                         form.add_error(None, f"Photo {i} must be an image file.")
+#                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
+#                     if photo.size > 5 * 1024 * 1024:  # 5 MB
+#                         form.add_error(None, f"Photo {i} exceeds 5MB size limit.")
+#                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
+#                     setattr(adv, f'photo{i}', photo.read())
+#             adv.save()
+#             return redirect('AdvBoard:adv_detail', pk=pk)
+#     else:
+#         form = AdvertisementForm(instance=adv)
+#     return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
+
+
 def edit_advertisement(request, pk):
     adv = get_object_or_404(Advertisement, pk=pk)
     if request.method == 'POST':
         form = AdvertisementForm(request.POST, request.FILES, instance=adv)
         if form.is_valid():
+            # Обработка новых фотографий и удаления
             for i in range(1, 5):
                 photo = request.FILES.get(f'photo{i}')
+
                 if photo:
+                    # Проверить тип и размер фото
                     if not photo.content_type.startswith('image/'):
                         form.add_error(None, f"Photo {i} must be an image file.")
                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
                     if photo.size > 5 * 1024 * 1024:  # 5 MB
                         form.add_error(None, f"Photo {i} exceeds 5MB size limit.")
                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
+
+                    # Сохранить фото как FileField-compatible объект
                     setattr(adv, f'photo{i}', photo.read())
+                else:
+                    # Если поле пустое, удалить фото
+                    setattr(adv, f'photo{i}', None)
+
+            # Сохранить изменения в объявлении
             adv.save()
             return redirect('AdvBoard:adv_detail', pk=pk)
     else:
         form = AdvertisementForm(instance=adv)
-    return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
+
+    # Собрать список фотографий для отображения в шаблоне
+    photos = [adv.photo1, adv.photo2, adv.photo3, adv.photo4]
+    return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv, 'photos': photos})
+
+
+
 
 
 @login_required
