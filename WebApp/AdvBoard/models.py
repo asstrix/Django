@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     advertisements_count = models.PositiveIntegerField(default=0)
 
+
 class Advertisement(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
