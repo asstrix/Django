@@ -9,25 +9,24 @@
 
         <div style="margin-bottom: 20px;">
             <label for="id_username" style="display: block; font-weight: bold; margin-bottom: 5px;">Username</label>
-            {% render_field form.username style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="id_email" style="display: block; font-weight: bold; margin-bottom: 5px;">Email</label>
-            {% render_field form.email style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+            {% render_field form.username style="width: 95%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
         </div>
 
         <div style="margin-bottom: 20px;">
             <label for="id_password1" style="display: block; font-weight: bold; margin-bottom: 5px;">Password</label>
-            {% render_field form.password1 style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+            {% render_field form.password1 style="width: 95%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
         </div>
 
         <div style="margin-bottom: 20px;">
             <label for="id_password2" style="display: block; font-weight: bold; margin-bottom: 5px;">Confirm Password</label>
-            {% render_field form.password2 style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+            {% render_field form.password2 style="width: 95%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
         </div>
 
-        <button type="submit" style="width: 100%; padding: 10px; background-color: #005a00; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Sign Up</button>
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit" style="width: 30%; padding: 10px; background-color: #005a00; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                Sign Up
+            </button>
+        </div>
     </form>
 </div>
 {% endblock %}

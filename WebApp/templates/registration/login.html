@@ -14,7 +14,7 @@
 
         <div style="margin-bottom: 20px;">
             <label for="id_username" style="display: block; font-weight: bold; margin-bottom: 5px;">Username</label>
-            {% render_field form.username style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+            {% render_field form.username style="width: 95%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
             {% if form.username.errors %}
                 <div style="color: red; font-size: 14px; margin-top: 5px;">
                     {{ form.username.errors }}
@@ -24,7 +24,7 @@
 
         <div style="margin-bottom: 20px;">
             <label for="id_password" style="display: block; font-weight: bold; margin-bottom: 5px;">Password</label>
-            {% render_field form.password style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
+            {% render_field form.password style="width: 95%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" %}
             {% if form.password.errors %}
                 <div style="color: red; font-size: 14px; margin-top: 5px;">
                     {{ form.password.errors }}
@@ -33,8 +33,11 @@
         </div>
 
         <input type="hidden" name="next" value="{{ next }}">
-
-        <button type="submit" style="width: 100%; padding: 10px; background-color: #005a00; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Login</button>
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit" style="width: 30%; padding: 10px; background-color: #005a00; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                Login
+            </button>
+        </div>
     </form>
 </div>
 {% endblock %}

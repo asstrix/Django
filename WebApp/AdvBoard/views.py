@@ -172,13 +172,14 @@ def edit_advertisement(request, pk):
                         return render(request, 'board/edit_adv.html', {'form': form, 'adv': adv})
                     setattr(adv, photo_field, photo.read())
                 else:
+                    print('We are here')
                     existing_photo = getattr(adv, photo_field)
                     if request.POST.get(f'clear_{photo_field}'):
                         setattr(adv, photo_field, None)
                     elif not existing_photo:
                         setattr(adv, photo_field, None)
             adv.save()
-            return redirect('AdvBoard:adv_detail', pk=pk)
+            return redirect('AdvBoard:adv_list')
     else:
         form = AdvertisementForm(instance=adv)
     photos = [adv.photo1, adv.photo2, adv.photo3, adv.photo4]
