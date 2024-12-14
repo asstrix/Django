@@ -33,15 +33,11 @@ def home(request):
 
 def advertisement_list(request):
     adv_list = Advertisement.objects.filter(completed=False, deleted=False)
-
-    # Добавляем подсчет лайков и дизлайков
     for ad in adv_list:
         ad.like_count = ad.likes.count()
         ad.dislike_count = ad.dislikes.count()
-
-    # Пагинация
     page = request.GET.get('page', 1)
-    paginator = Paginator(adv_list, 12)  # Показываем 10 объявлений на страницу
+    paginator = Paginator(adv_list, 12)
 
     try:
         adv = paginator.page(page)
@@ -49,7 +45,6 @@ def advertisement_list(request):
         adv = paginator.page(1)
     except EmptyPage:
         adv = paginator.page(paginator.num_pages)
-
     return render(request, 'board/adv_list.html', {'adv': adv})
 
 
@@ -168,21 +163,15 @@ def complete_advertisement(request, pk):
 
 @login_required
 def my_advertisements(request):
-    ads = Advertisement.objects.filter(author=request.user)  # Фильтруем объявления автора
-
-    # Пагинация: 5 объявлений на странице
-    paginator = Paginator(ads, 5)  # Показываем 5 объявлений на странице
+    ads = Advertisement.objects.filter(author=request.user)
+    paginator = Paginator(ads, 5)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
-
-    active_tab = 'my_ads'  # Устанавливаем текущую вкладку
+    active_tab = 'my_ads'
     sub_tab = request.GET.get('filter', 'active')
-
-    # Подсчёт активных, завершённых и удалённых объявлений
     active_count = ads.filter(completed=False, deleted=False).count()
     completed_count = ads.filter(completed=True).count()
     deleted_count = ads.filter(deleted=True).count()
-
     return render(request, 'my_ads.html', {
         'ads': page_obj,
         'active_tab': active_tab,
