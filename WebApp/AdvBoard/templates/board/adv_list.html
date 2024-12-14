@@ -2,46 +2,76 @@
 {% load filters %}
 {% load static %}
 {% block content %}
-<ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 20px;">
-  {% for ad in adv %}
-    <li style="width: 250px; border: 1px solid #ccc; border-radius: 8px; background-color:
-                #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative; z-index: 1;">
-      <a href="{% url 'AdvBoard:adv_detail' pk=ad.pk %}" style="text-decoration: none; color: inherit; display: block;">
-        {% if ad.photo1 %}
-          <div class="photo-container" style="position: relative; z-index: 1;">
-            <div style="width: 100%; height: 150px; overflow: hidden;">
-              <img src="data:image/jpeg;base64,{{ ad.photo1|b64encode }}"
-                   alt="{{ ad.title }}"
-                   style="width: 100%; height: 100%; object-fit: cover;">
+
+<!-- Сетка объявлений -->
+<div style="display: flex; justify-content: center; align-items: flex-start; min-height: 50vh; padding: 20px;">
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; width: 100%;">
+    {% for ad in adv %}
+      <div style="border: 1px solid #ccc; border-radius: 8px; background-color: #fff;
+                  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative; z-index: 1;">
+        <a href="{% url 'AdvBoard:adv_detail' pk=ad.pk %}" style="text-decoration: none; color: inherit;">
+          {% if ad.photo1 %}
+            <div class="photo-container" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 200px;">
+              <div style="width: 70%; height: 150px; overflow: hidden;">
+                <img src="data:image/jpeg;base64,{{ ad.photo1|b64encode }}"
+                     alt="{{ ad.title }}"
+                     style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+            </div>
+          {% endif %}
+          <div style="padding: 15px;">
+            <div style="margin-bottom: 5px; font-size: 14px; color: #555;">{{ ad.title }}</div>
+            <div style="display: flex; align-items: center;">
+              <span style="font-size: 14px; color: #555; border: 1px solid #ccc; border-radius: 10px; padding: 5px;
+                          margin-right: 5px;">
+                author:
+              </span>
+              <span style="font-size: 14px; color: #555;">
+                {{ ad.author }}
+              </span>
+              <span style="margin-left: 50px; display: inline-flex; align-items: center; gap: 10px;">
+                <a href="#" onclick="vote({{ ad.pk }}, 'like'); return false;">
+                    <img src="{% static 'icons/thumbs-up.png' %}" alt="Thumbs Up" style="width: 20px; height: 20px; cursor: pointer;">
+                </a>
+              </span>
+                <span style="margin-left: 5px" id="like-count-{{ ad.pk }}">{{ ad.like_count }} </span>
+                <a style="margin-left: 10px" href="#" onclick="vote({{ ad.pk }}, 'dislike'); return false;">
+                    <img src="{% static 'icons/thumbs-down.png' %}" alt="Thumbs Down" style="width: 20px; height: 20px; cursor: pointer;">
+                </a>
+                <span style="margin-left: 5px" id="dislike-count-{{ ad.pk }}">{{ ad.dislike_count }}</span>
             </div>
           </div>
-        {% endif %}
-        <div style="padding: 15px;">
-          <div style="margin-bottom: 5px; font-size: 14px; color: #555;">{{ ad.title }}</div>
-          <div style="display: flex; align-items: center;">
-            <span style="font-size: 14px; color: #555; border: 1px solid #ccc; border-radius: 10px; padding: 5px;
-                        margin-right: 5px;">
-              author:
-            </span>
-            <span style="font-size: 14px; color: #555;">
-              {{ ad.author }}
-            </span>
-            <span style="margin-left: 50px; display: inline-flex; align-items: center; gap: 10px;">
-              <a href="#" onclick="vote({{ ad.pk }}, 'like'); return false;">
-                  <img src="{% static 'icons/thumbs-up.png' %}" alt="Thumbs Up" style="width: 20px; height: 20px; cursor: pointer;">
-              </a>
-            </span>
-              <span style="margin-left: 5px" id="like-count-{{ ad.pk }}">{{ ad.like_count }} </span>
-              <a style="margin-left: 10px" href="#" onclick="vote({{ ad.pk }}, 'dislike'); return false;">
-                  <img src="{% static 'icons/thumbs-down.png' %}" alt="Thumbs Down" style="width: 20px; height: 20px; cursor: pointer;">
-              </a>
-              <span style="margin-left: 5px" id="dislike-count-{{ ad.pk }}">{{ ad.dislike_count }}</span>
-          </div>
-        </div>
-      </a>
-    </li>
-  {% endfor %}
-</ul>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+<!-- Пагинация -->
+<div style="text-align: center; margin-top: 20px;">
+  <ul style="list-style: none; padding: 0; display: inline-flex; gap: 10px;">
+    {% if adv.has_previous %}
+      <li><a href="?page=1" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">First</a></li>
+      <li><a href="?page={{ adv.previous_page_number }}" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">Previous</a></li>
+    {% endif %}
+
+    {% for num in adv.paginator.page_range %}
+      {% if adv.number == num %}
+        <li><span style="padding: 5px 10px; border: 1px solid #005a00; border-radius: 4px; background-color: #005a00; color: #fff;">{{ num }}</span></li>
+      {% else %}
+        <li><a href="?page={{ num }}" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if adv.has_next %}
+      <li><a href="?page={{ adv.next_page_number }}" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">Next</a></li>
+      <li><a href="?page={{ adv.paginator.num_pages }}" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">Last</a></li>
+    {% endif %}
+  </ul>
+</div>
+
 <script>
     function vote(adId, action) {
         fetch(`/board/${adId}/${action}/`, {
@@ -65,4 +95,5 @@
         });
     }
 </script>
+
 {% endblock %}

@@ -7,6 +7,7 @@ from .forms import SignUpForm
 from django.contrib.auth import login
 from django.utils.timezone import now
 from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def logout_view(request):
@@ -31,10 +32,24 @@ def home(request):
 
 
 def advertisement_list(request):
-    adv = Advertisement.objects.filter(completed=False, deleted=False)
-    for ad in adv:
+    adv_list = Advertisement.objects.filter(completed=False, deleted=False)
+
+    # Добавляем подсчет лайков и дизлайков
+    for ad in adv_list:
         ad.like_count = ad.likes.count()
         ad.dislike_count = ad.dislikes.count()
+
+    # Пагинация
+    page = request.GET.get('page', 1)
+    paginator = Paginator(adv_list, 12)  # Показываем 10 объявлений на страницу
+
+    try:
+        adv = paginator.page(page)
+    except PageNotAnInteger:
+        adv = paginator.page(1)
+    except EmptyPage:
+        adv = paginator.page(paginator.num_pages)
+
     return render(request, 'board/adv_list.html', {'adv': adv})
 
 
@@ -42,7 +57,7 @@ def advertisement_list(request):
 def advertisement_detail(request, pk):
     adv = get_object_or_404(Advertisement, pk=pk)
     if request.user == adv.author:
-        return redirect('AdvBoard:my_ads')
+        return redirect('AdvBoard:edit_adv', pk=pk)
     return render(request, 'board/adv_detail.html', {
         'adv': adv,
         'photos': [adv.photo1, adv.photo2, adv.photo3, adv.photo4],
@@ -153,27 +168,28 @@ def complete_advertisement(request, pk):
 
 @login_required
 def my_advertisements(request):
-    all_ads = Advertisement.objects.filter(author=request.user)
-    active_ads = all_ads.filter(completed=False, deleted=False)
-    completed_ads = all_ads.filter(completed=True, deleted=False)
-    deleted_ads = all_ads.filter(completed=False, deleted=True)
-    active_tab = 'my_ads'
+    ads = Advertisement.objects.filter(author=request.user)  # Фильтруем объявления автора
+
+    # Пагинация: 5 объявлений на странице
+    paginator = Paginator(ads, 5)  # Показываем 5 объявлений на странице
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    active_tab = 'my_ads'  # Устанавливаем текущую вкладку
     sub_tab = request.GET.get('filter', 'active')
-    if sub_tab == 'active':
-        ads = active_ads
-    elif sub_tab == 'completed':
-        ads = completed_ads
-    elif sub_tab == 'deleted':
-        ads = deleted_ads
-    else:
-        ads = all_ads
+
+    # Подсчёт активных, завершённых и удалённых объявлений
+    active_count = ads.filter(completed=False, deleted=False).count()
+    completed_count = ads.filter(completed=True).count()
+    deleted_count = ads.filter(deleted=True).count()
+
     return render(request, 'my_ads.html', {
+        'ads': page_obj,
         'active_tab': active_tab,
         'sub_tab': sub_tab,
-        'ads': ads,
-        'active_count': active_ads.count(),
-        'completed_count': completed_ads.count(),
-        'deleted_count': deleted_ads.count(),
+        'active_count': active_count,
+        'completed_count': completed_count,
+        'deleted_count': deleted_count,
     })
 
 
