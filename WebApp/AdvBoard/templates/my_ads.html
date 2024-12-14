@@ -3,13 +3,13 @@
 {% load static %}
 {% block title %}My Ads{% endblock %}
 {% block content %}
-<div style="margin-bottom: 20px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px;">
+<div style="margin-bottom: 0px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px;">
         <p style="margin: 0; font-size: 16px; color: #333;">
             <strong>Total Advertisements Created:</strong> {{ request.user.advertisements_count }}
         </p>
     </div>
-<div style="padding: 20px; font-family: Arial, sans-serif;">
-    <div style="display: flex; border-bottom: 1px solid #ddd; margin-bottom: 20px;">
+<div style="padding: 10px; font-family: Arial, sans-serif;">
+    <div style="display: flex; border-bottom: 1px solid #ddd; margin-bottom: 0px;">
         <a href="{% url 'AdvBoard:my_ads' %}"
            style="padding: 10px 20px; font-size: 16px; color: {% if active_tab == 'my_ads' %}#005a00{% else %}#555{% endif %};
                   font-weight: {% if active_tab == 'my_ads' %}bold{% else %}normal{% endif %};
@@ -19,7 +19,7 @@
         </a>
     </div>
 
-    <div style="display: flex; align-items: center; border-bottom: 1px solid #ddd; margin-bottom: 20px; padding: 0 20px;">
+    <div style="display: flex; align-items: center; border-bottom: 1px solid #ddd; margin-bottom: 10px; padding: 0 20px;">
         <a href="{% url 'AdvBoard:my_ads' %}?filter=active"
            style="padding: 5px 15px; font-size: 14px; color: {% if sub_tab == 'active' %}#005a00{% else %}#555{% endif %};
                   text-decoration: none; border-right: 1px solid #ddd;">
@@ -43,7 +43,7 @@
 
     <div>
     {% if ads %}
-        <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; flex-direction: column; align-items: top; gap: 10px;">
             {% for ad in ads %}
                 <div class="ad-row" style="display: flex; align-items: center; justify-content: space-between;
                                            padding: 10px; border: 1px solid #ccc; border-radius: 8px;
@@ -165,7 +165,7 @@
             {% endfor %}
         </div>
         <!-- Пагинация -->
-        <div style="text-align: center; margin-top: 20px;">
+        <div style="text-align: center; margin-top: 10px;">
             <ul style="list-style: none; padding: 0; display: inline-flex; gap: 10px;">
                 {% if ads.has_previous %}
                     <li><a href="?page=1" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">First</a></li>
