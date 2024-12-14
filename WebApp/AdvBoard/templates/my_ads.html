@@ -171,7 +171,6 @@
                     <li><a href="?page=1" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">First</a></li>
                     <li><a href="?page={{ ads.previous_page_number }}" style="text-decoration: none; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; color: #005a00;">Previous</a></li>
                 {% endif %}
-
                 {% for num in ads.paginator.page_range %}
                     {% if ads.number == num %}
                         <li><span style="padding: 5px 10px; border: 1px solid #005a00; border-radius: 4px; background-color: #005a00; color: #fff;">{{ num }}</span></li>
